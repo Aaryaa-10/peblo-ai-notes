@@ -3,15 +3,17 @@ import Note from "@/models/notes";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  context: any
 ) {
   try {
     await connectDB();
 
+    const id = context.params.id;
+
     const body = await req.json();
 
     const updatedNote = await Note.findByIdAndUpdate(
-      params.id,
+      id,
       {
         title: body.title,
         content: body.content,
