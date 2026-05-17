@@ -4,15 +4,17 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  context: any
 ) {
   try {
     await connectDB();
 
+    const id = context.params.id;
+
     const shareId = uuidv4();
 
     const updatedNote = await Note.findByIdAndUpdate(
-      params.id,
+      id,
       {
         isPublic: true,
         shareId,
