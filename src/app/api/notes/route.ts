@@ -1,69 +1,39 @@
 import { connectDB } from "@/lib/db";
 import Note from "@/models/notes";
 
-export async function POST(req: Request) {
+export async function PATCH(
+  req: Request,
+  context: any
+) {
   try {
     await connectDB();
 
-    const body = await req.json();
+    const id = context.params.id;
 
-    const note = await Note.create({
-      userId: body.userId,
-
-      title: body.title,
-
-      content: body.content,
-
-      tags: body.tags || [],
-
-      category: body.category || "General",
-    });
+    const updatedNote = await Note.findByIdAndUpdate(
+      id,
+      {
+        isPublic: true,
+        shareId: crypto.randomUUID(),
+      },
+      {
+        new: true,
+      }
+    );
 
     return Response.json(
       {
-        message: "Note created successfully",
-        note,
+        message: "Note shared successfully",
+        shareId: updatedNote.shareId,
       },
-      { status: 201 }
+      { status: 200 }
     );
   } catch (error: any) {
     console.log(error);
 
     return Response.json(
       {
-        message: "Failed to create note",
-        error: error.message,
-      },
-      { status: 500 }
-    );
-  }
-
-  
-}
-
- export async function GET(req: Request) {
-  try {
-    await connectDB();
-
-    const { searchParams } = new URL(req.url);
-
-    const userId = searchParams.get("userId");
-
-    const notes = await Note.find({
-      userId,
-    }).sort({
-      updatedAt: -1,
-    });
-
-    return Response.json(notes, {
-      status: 200,
-    });
-  } catch (error: any) {
-    console.log(error);
-
-    return Response.json(
-      {
-        message: "Failed to fetch notes",
+        message: "Failed to share note",
         error: error.message,
       },
       { status: 500 }
