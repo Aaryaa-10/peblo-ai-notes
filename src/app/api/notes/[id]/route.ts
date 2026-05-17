@@ -8,7 +8,9 @@ export async function PATCH(
   try {
     await connectDB();
 
-    const id = context.params.id;
+    const params = await context.params;
+
+    const id = params.id;
 
     const body = await req.json();
 
@@ -38,6 +40,38 @@ export async function PATCH(
     return Response.json(
       {
         message: "Failed to update note",
+        error: error.message,
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  req: Request,
+  context: any
+) {
+  try {
+    await connectDB();
+
+    const params = await context.params;
+
+    const id = params.id;
+
+    await Note.findByIdAndDelete(id);
+
+    return Response.json(
+      {
+        message: "Note deleted",
+      },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.log(error);
+
+    return Response.json(
+      {
+        message: "Failed to delete note",
         error: error.message,
       },
       { status: 500 }

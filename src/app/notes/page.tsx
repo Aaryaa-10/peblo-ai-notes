@@ -142,6 +142,26 @@ const shareNote = async () => {
     toast.error("Failed to share note");
   }
 };
+
+const deleteNote = async () => {
+  if (!selectedNote) return;
+
+  try {
+    await axios.delete(
+      `/api/notes/${selectedNote._id}`
+    );
+
+    toast.success("Note deleted");
+
+    setSelectedNote(null);
+
+    fetchNotes();
+  } catch (error) {
+    console.log(error);
+
+    toast.error("Failed to delete note");
+  }
+};
     return (
         <main className="h-screen bg-gradient-to-br from-black via-zinc-950 to-purple-950 text-white flex">
             {/* SIDEBAR */}
@@ -232,6 +252,13 @@ const shareNote = async () => {
                                 className="mb-4 ml-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:scale-105 transition-all px-4 py-2 rounded-lg"
                             >
                                 Share Note
+                            </button>
+
+                            <button
+                                onClick={deleteNote}
+                                className="mb-4 ml-3 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all"
+                            >
+                                Delete Note
                             </button>
                             <textarea
                                 value={selectedNote.content}
